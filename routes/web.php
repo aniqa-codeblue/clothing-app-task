@@ -13,5 +13,5 @@ Route::middleware([HandleCors::class])->group(function () {
 
 Route::post('/save_products', [ProductController::class, 'store']);
 
-Route::get('/display_products', [ProductController::class, 'index']);
+Route::get('/display_products{id}', [ProductController::class, 'index']);
 
