@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function store(Request $request){
+    public function stores_product(Request $request){
          //dd()
        $validator = Validator::make($request -> all(), [
             'name' => 'required|string|max:255',
@@ -36,7 +36,7 @@ class ProductController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        //D:\productshoptask\storage
+        //D:\productshoptask\storage\app\public\Images
         // Handle image uploads
         $imageData = [];
         if ($request->hasFile('images')) {
@@ -45,25 +45,14 @@ class ProductController extends Controller
                 $originalName = $image->getClientOriginalName();
                 
                 // Store the file in storage\app\public\products
-                $path = $image->move_to('\Images', $originalName, 'public');
+                $path = $image->move('Images', $originalName);
                 
                 // Add to image data array with original name and path
-                $imageData[] = [
-                    'name' => $originalName,
-                    'path' => $path, ];
+                $imageData[] = ['name' => $originalName];
             }
         } 
 
-        $product = Products::create([
-
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
-            'quantity' => $request->input('quantity'),
-            'size' => json_encode($request->input('size')),
-            'color' => json_encode($request->input('color')),
-            'images' => json_encode($imageData),
-        ]);
+        $product = Products::create([$request->all()]);
 
         return response()->json([
             'message' => 'Product created successfully!',
@@ -94,5 +83,42 @@ class ProductController extends Controller
         //     $product->images = json_decode($product->images, TRUE);
         // });
         return view('product_card', compact('product'));
+    }
+
+    public function store(Request $request)
+    {
+        // Validate the request data
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required',
+            'product_name' => 'required|string|max:255',
+            'product_image' => 'required|string',
+            'product_price' => 'required|numeric',
+            'selected_color' => 'required|string|max:50',
+            'selected_size' => 'required|string|max:10',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Create a new product
+        $product = Products::create($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product added successfully',
+            'data' => $product
+        ], 201);
+    }
+
+    public function display_card()
+    {
+        $products = Products::select('name', 'description', 'images')->get();
+        return response()->json($products);
     }
 }

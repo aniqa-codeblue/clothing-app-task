@@ -245,7 +245,7 @@
                 @endphp
                 
                 @if(!empty($imagesArray) && is_array($imagesArray))
-                    <img src="{{ asset($imagesArray[0]['path']) }}" alt="Main Product Image">
+                    <img src="{{ asset($imagesArray[0]['name']) }}" alt="Main Product Image">
                 @else
                     <img src="{{ asset('placeholder.jpg') }}" alt="No Image Available">
                 @endif
@@ -253,7 +253,7 @@
             <div class="thumbnail-images">
                 @if(!empty($imagesArray) && is_array($imagesArray))
                     @foreach($imagesArray as $image)
-                        <img src="{{ asset($image['path']) }}" alt="{{ $image['name'] }}">
+                        <img src="{{ asset($image['name']) }}" alt="image not available">
                     @endforeach
                 @endif
             </div>
