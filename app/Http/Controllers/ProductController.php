@@ -36,6 +36,7 @@ class ProductController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        //D:\productshoptask\storage
         // Handle image uploads
         $imageData = [];
         if ($request->hasFile('images')) {
@@ -43,13 +44,15 @@ class ProductController extends Controller
                 // Get original filename
                 $originalName = $image->getClientOriginalName();
                 
-                // Store the file in storage/app/public/products
-                $path = $image->storeAs('products', $originalName, 'public');
+                // Store the file in storage\app\public\products
+                $path = $image->move_to('\Images', $originalName, 'public');
                 
                 // Add to image data array with original name and path
-                $imageData[] = $originalName;
+                $imageData[] = [
+                    'name' => $originalName,
+                    'path' => $path, ];
             }
-        }
+        } 
 
         $product = Products::create([
 
@@ -57,9 +60,9 @@ class ProductController extends Controller
             'description' => $request->input('description'),
             'price' => $request->input('price'),
             'quantity' => $request->input('quantity'),
-            'size' => json_encode($request->input('size'), JSON_UNESCAPED_SLASHES),
-            'color' => json_encode($request->input('color'), JSON_UNESCAPED_SLASHES),
-            'images' => json_encode($imageData, JSON_UNESCAPED_SLASHES),
+            'size' => json_encode($request->input('size')),
+            'color' => json_encode($request->input('color')),
+            'images' => json_encode($imageData),
         ]);
 
         return response()->json([
@@ -69,14 +72,27 @@ class ProductController extends Controller
     }
 
     public function index() {
-
         $products = Products::all();
-
+        
+        // Parse JSON fields for each product
         $products->each(function ($product) {
-            $product->size = json_decode($product->size);
-            $product->color = json_decode($product->color);
-            $product->images = json_decode($product->images);
+            $product->size = json_decode($product->size, TRUE);
+            $product->color = json_decode($product->color, TRUE);
+            $product->images = json_decode($product->images, TRUE);
         });
+        
         return response()->json($products);
+    }
+
+    public function show($id) {
+
+        $product = Products::findOrFail($id);
+
+        // $products->each(function ($product) {
+        //     $product->size = json_decode($product->size, TRUE);
+        //     $product->color = json_decode($product->color, TRUE);
+        //     $product->images = json_decode($product->images, TRUE);
+        // });
+        return view('product_card', compact('product'));
     }
 }

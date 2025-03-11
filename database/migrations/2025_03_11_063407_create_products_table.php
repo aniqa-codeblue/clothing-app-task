@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->integer('quantity');
-            $table->array('size');
-            $table->array('color');
-            $table->array('images');
+            $table->json('size');
+            $table->json('color');
+            $table->json('images');
             $table->timestamps();
         });
     }
