@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our products</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nanum+Gothic:wght@400;700&family=Outfit:wght@100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: "Barlow", sans-serif;
+            background-color: rgb(218, 218, 208);
+        }
+
+        .container {
+            display: flex;
+            margin-top: 3rem;
+            font-size: 17px;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            margin: 0px;
+        }
+
+        li {
+            list-style: none;
+            margin-right: 4rem;
+        }
+
+        a {
+            text-decoration-line: none;
+            color: black;
+        }
+
+        nav {
+            display: flex;
+            flex-grow: 1;
+            justify-content: space-around;
+        }
+
+        #sign-up {
+            background-color: transparent;
+            color: black;
+            border: 1px solid black;
+            border-radius: 3rem;
+            font-size: 17px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .products--page__grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products--page__grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .products--page__name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .products--page__price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        /* Products page container */
+        .products--page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .products--page__title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        /* Products grid */
+        .products--page__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Product link */
+        .products--page__link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        /* Product card */
+        .products--page__card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .products--page__link:hover .products--page__card {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Product image container */
+        .products--page__image-container {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .products--page__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .products--page__link:hover .products--page__image {
+            transform: scale(1.05);
+        }
+
+        .products-grid {
+            margin: 2rem;
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            Logo
+        </nav>
+        <nav class="dashboard-nav">Our products</nav>
+        <nav>
+            <button id="sign-up">Sign Up</button>
+        </nav>
+    </div>
+    <div class="products-grid">
+        <!-- Product Card 1 -->
+        <a href="#" class="products--page__link">
+            <article class="products--page__card">
+                <div class="products--page__image-container">
+
+                </div>
+            </article>
+        </a>
+    </div>
+
+    <script>
+        fetch('http://127.0.0.1:8000/api//product_card')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('products-container');
+                data.forEach(product => {
+                    const productDiv = document.createElement('div');
+                    productDiv.classList.add('product');
+
+                    productDiv.innerHTML = `
+                        <h2>${product.name}</h2>
+                        <img src="${JSON.parse(product.images)[0]}" alt="${product.name}">
+                        <p>${product.description}</p>
+                    `;
+
+                    container.appendChild(productDiv);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    </script>
+</body>
+
+</html>
